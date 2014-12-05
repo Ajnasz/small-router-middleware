@@ -40,6 +40,18 @@ var router = function () {
 		};
 	}
 
+	function callHandlers(req, res, handlers, index) {
+		var handler = handlers[index];
+
+		function next() {
+			if (handlers.length > ++index) {
+				callHandlers(req, res, handlers, index);
+			}
+		}
+
+		handler(req, res, next);
+	}
+
 	createRoutes();
 
 	return {
@@ -65,19 +77,8 @@ var router = function () {
 				res.end('Not found');
 				return;
 			}
-			function callHandlers(handlers) {
-				var handler = handlers.shift();
 
-				function next() {
-					if (handlers.length) {
-						callHandlers(handlers);
-					}
-				}
-
-				handler(req, res, next);
-			}
-
-			callHandlers(handlers);
+			callHandlers(req, res, handlers, 0);
 		}
 	};
 };

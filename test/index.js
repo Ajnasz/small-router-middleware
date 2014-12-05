@@ -149,5 +149,22 @@ describe('router', function () {
 			sinon.assert.notCalled(stub2);
 		});
 
+		it('should handler every time the route called', function () {
+			var stub1 = sinon.stub().callsArg(2),
+				stub2 = sinon.stub().callsArg(2);
+
+			router.get('/foo', stub1);
+			router.get('/foo', stub2);
+
+			router.route(req, res);
+
+			sinon.assert.calledOnce(stub1);
+			sinon.assert.calledOnce(stub2);
+
+			router.route(req, res);
+			sinon.assert.calledTwice(stub1);
+			sinon.assert.calledTwice(stub2);
+		});
+
 	});
 });
