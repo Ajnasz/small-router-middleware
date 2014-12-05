@@ -1,0 +1,19 @@
+{
+  "name": "small-router-middleware",
+  "version": "1.0.0",
+  "description": "Small router middleware for http.createRequest",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "$(npm bin)/mocha -u tdd test/index.js"
+  },
+  "author": "Lajos Koszti",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "mocha": "^2.0.1",
+    "sinon": "^1.12.1"
+  }
+}
