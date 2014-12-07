@@ -76,7 +76,7 @@ var router = function () {
 			decorateResponse(res);
 
 			if (!handlers) {
-				res.writeHead(404, {'Content-Type': 'plain/text'});
+				res.writeHead(404, {'Content-Type': 'plain/html'});
 				res.end('Not found');
 				return;
 			}

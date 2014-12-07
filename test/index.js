@@ -187,5 +187,14 @@ describe('router', function () {
 			sinon.assert.calledTwice(stub2);
 		});
 
+		it('should do 404 if no handler found', function () {
+			resMock.expects('writeHead').calledWith(404, {'Content-Type': 'text/html'});
+			resMock.expects('end').calledWith('Not found');
+
+			router.route(req, res);
+
+			resMock.verify();
+		});
+
 	});
 });
