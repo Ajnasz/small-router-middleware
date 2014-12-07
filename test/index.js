@@ -108,6 +108,27 @@ describe('router', function () {
 					res.send(text);
 					resMock.verify();
 				});
+				it('should wirteHead with 200 and content-type text/html, if no statuscode', function () {
+					var stub = sinon.stub().yieldsTo('send', 'foo');
+					resMock.expects('writeHead').calledWith(200, {'Content-Type': 'text/html'});
+
+					router.get('/foo', stub);
+
+					router.route(req, res);
+
+					resMock.verify();
+				});
+				it('should wirteHead with 200 and content-type text/html, if statuscode sent', function () {
+					var stub = sinon.stub().yieldsTo('send', 'foo');
+					res.statusCode = 200;
+					resMock.expects('writeHead').never();
+
+					router.get('/foo', stub);
+
+					router.route(req, res);
+
+					resMock.verify();
+				});
 			});
 		});
 

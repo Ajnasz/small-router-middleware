@@ -35,6 +35,9 @@ var router = function () {
 
 	function decorateResponse(res) {
 		res.send = function (text) {
+			if (!res.statusCode) {
+				res.writeHead(200, {'Content-Type': 'text/html'});
+			}
 			res.write(text);
 			res.end();
 		};
