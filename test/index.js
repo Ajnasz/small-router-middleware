@@ -197,4 +197,45 @@ describe('router', function () {
 		});
 
 	});
+	describe('regexp route', function () {
+		var req, res, reqMock, resMock;
+
+		setup(function () {
+
+			req = {
+				method: 'GET',
+				url: '/foo/123/foobar/234/bazqux'
+			};
+
+			res = {
+				writeHead: function () {},
+				write: function () {},
+				end: function () {}
+			};
+			reqMock = sinon.mock(req);
+			resMock = sinon.mock(res);
+		});
+		teardown(function () {
+			reqMock.restore();
+			resMock.restore();
+			req = null;
+			res = null;
+		});
+
+		it('should find handler for regexp route', function() {
+			var spy = sinon.spy();
+			router.get('/foo/{num}/{word}/{num}/{word}', spy);
+
+			router.route(req, res);
+
+			sinon.assert.calledOnce(spy);
+			sinon.assert.calledWith(spy, req, res, sinon.match.func, sinon.match.array);
+			assert.lengthOf(spy.lastCall.args, 4);
+			assert.equal(spy.lastCall.args[3][0], req.url.pathname);
+			assert.equal(spy.lastCall.args[3][1], '123');
+			assert.equal(spy.lastCall.args[3][2], 'foobar');
+			assert.equal(spy.lastCall.args[3][3], '234');
+			assert.equal(spy.lastCall.args[3][4], 'bazqux');
+		});
+	});
 });

@@ -7,7 +7,7 @@ var router = function () {
 		routes = {
 			get: {},
 			post: {}
-		}
+		};
 	}
 
 	function toArray(arg) {
@@ -18,7 +18,7 @@ var router = function () {
 		var savedArgs = toArray(arguments).slice(1);
 		return function () {
 			method.apply(null, savedArgs.concat(toArray(arguments)));
-		}
+		};
 	}
 
 	function handleRoute(type, url, handler) {
@@ -43,16 +43,48 @@ var router = function () {
 		};
 	}
 
-	function callHandlers(req, res, handlers, index) {
+	function callHandlers(req, res, handlers, index, urlMatch) {
 		var handler = handlers[index];
 
 		function next() {
 			if (handlers.length > ++index) {
-				callHandlers(req, res, handlers, index);
+				callHandlers(req, res, handlers, index, urlMatch);
 			}
 		}
 
-		handler(req, res, next);
+		handler(req, res, next, urlMatch);
+	}
+
+	function findHandler(routes, method, pathname) {
+		if (!routes[method]) {
+			return null;
+		}
+
+		var route = Object.keys(routes[method]).map(function(route) {
+			var routeRegexp, matched;
+			routeRegexp = route
+					.replace(/\{num\}/g, '([\\d]+)')
+					.replace(/\{word\}/g, '([\\w]+)');
+
+			matched = pathname.match(new RegExp(routeRegexp));
+
+			if (matched !== null) {
+				return {
+					match: matched,
+					handler: routes[method][route]
+				};
+			}
+
+			return null;
+		}).filter(function (route) {
+			return route !== null;
+		});
+
+		if (route.length > 0) {
+			return route[0];
+		}
+
+		return null;
 	}
 
 	createRoutes();
@@ -71,7 +103,7 @@ var router = function () {
 
 			req.url = reqUrl;
 
-			handlers = routes[method] && routes[method][req.url.pathname];
+			handlers = findHandler(routes, method, req.url.pathname);
 
 			decorateResponse(res);
 
@@ -81,7 +113,7 @@ var router = function () {
 				return;
 			}
 
-			callHandlers(req, res, handlers, 0);
+			callHandlers(req, res, handlers.handler, 0, handlers.match);
 		}
 	};
 };
