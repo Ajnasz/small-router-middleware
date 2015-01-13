@@ -1,6 +1,6 @@
 {
   "name": "small-router-middleware",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Small router middleware for http.createRequest",
   "main": "index.js",
   "directories": {
